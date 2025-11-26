@@ -4,7 +4,7 @@
  */
 
 import { expect } from 'chai';
-import { getClaimantName, getVeteranName } from './name-helpers';
+import { getClaimantName, getVeteranName, getPersonName } from './name-helpers';
 
 describe('nameHelpers', () => {
   describe('getClaimantName', () => {
@@ -198,6 +198,90 @@ describe('nameHelpers', () => {
         },
       };
       expect(getVeteranName(formData)).to.equal('Anakin     Skywalker');
+    });
+  });
+
+  describe('getPersonName', () => {
+    it('should return veteran name when relationship is veteran', () => {
+      const formData = {
+        claimantRelationship: {
+          relationship: 'veteran',
+        },
+        veteranInformation: {
+          veteranFullName: {
+            first: 'Anakin',
+            last: 'Skywalker',
+          },
+        },
+      };
+      expect(getPersonName(formData, 'the Veteran', 'the claimant')).to.equal(
+        'Anakin Skywalker',
+      );
+    });
+
+    it('should return claimant name when relationship is not veteran', () => {
+      const formData = {
+        claimantRelationship: {
+          relationship: 'spouse',
+        },
+        claimantInformation: {
+          claimantFullName: {
+            first: 'Padmé',
+            last: 'Amidala',
+          },
+        },
+        veteranInformation: {
+          veteranFullName: {
+            first: 'Anakin',
+            last: 'Skywalker',
+          },
+        },
+      };
+      expect(getPersonName(formData, 'the Veteran', 'the claimant')).to.equal(
+        'Padmé Amidala',
+      );
+    });
+
+    it('should return veteran fallback when veteran name is missing', () => {
+      const formData = {
+        claimantRelationship: {
+          relationship: 'veteran',
+        },
+        veteranInformation: {
+          veteranFullName: {},
+        },
+      };
+      expect(
+        getPersonName(
+          formData,
+          'custom veteran fallback',
+          'custom claimant fallback',
+        ),
+      ).to.equal('custom veteran fallback');
+    });
+
+    it('should return claimant fallback when claimant name is missing', () => {
+      const formData = {
+        claimantRelationship: {
+          relationship: 'spouse',
+        },
+        claimantInformation: {
+          claimantFullName: {},
+        },
+        veteranInformation: {
+          veteranFullName: {
+            first: 'Anakin',
+            last: 'Skywalker',
+          },
+        },
+      };
+      expect(
+        getPersonName(
+          formData,
+          'custom veteran fallback',
+          'custom claimant fallback',
+        ),
+      ).to.equal('custom claimant fallback');
     });
   });
 });
