@@ -4,6 +4,5 @@ export const SUBTITLE =
 
 // API Endpoints
 export const API_ENDPOINTS = {
-  csrfCheck: '/csrf_token',
   downloadPdf: '/form210779/download_pdf',
 };
